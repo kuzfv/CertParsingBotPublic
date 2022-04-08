@@ -1,0 +1,6 @@
+beautifulsoup4==4.11.0
+bs4==0.0.1
+fsb795==1.7.1
+pyTelegramBotAPI==4.4.0
+requests==2.27.1
+telebot==0.0.4
