@@ -273,7 +273,7 @@ def check_fss(cert: Certificate) -> dict:
 def check_egrul(cert: Certificate) -> dict:
     """Проверка отметок в ЕГРЮЛ"""
 
-    focus_api_token = "e799ea2f41de100b205c474e5a9ffe4ec0a4490d"
+    focus_api_token = "" # API-токен Фокус.API
     if cert.personal:
         return {}
     ogrn = str(cert.subject_ogrn)
