@@ -92,7 +92,6 @@ def handling_other(message):
             change_settings(message.chat.id, message.chat.username, idx)
         else:
             logger.info(f"{message.chat.id} | {message.chat.username} | Sent content - {message.content_type}")
-            # Абсолютно любой отправленный контент отслеживается
             bot.forward_message(ADMIN, message.chat.id, message.message_id)
     else:
         logger.info(f"{message.chat.id} | {message.chat.username} | Sent content - {message.content_type}")
@@ -196,7 +195,7 @@ Caption '{message.caption}' | Size {message.document.file_size} | Msg id - {mess
                 kpp_caption = inn_caption[:4] + "00000"
         return inn_caption, kpp_caption
 
-    def add_parameters(certificate: engine.Certificate, inn_parameter: str, kpp_parameter: str, user):
+    def add_parameters(certificate: engine.Certificate, inn_parameter: str, kpp_parameter: str, user) -> list:
         """Добавление дополнительных параметров к ответному сообщению"""
 
         # Запрос к БД с настройками для определения дальнейшего показа СНИЛС/Отпечатка
@@ -211,13 +210,13 @@ Caption '{message.caption}' | Size {message.document.file_size} | Msg id - {mess
         except StopIteration:
             show_thumbprint = True
         if certificate.diadoc.success_request:
-            first_param = f"Отпечаток — `{certificate.diadoc.Thumbprint}`" * show_thumbprint
+            tp_param = f"Отпечаток — `{certificate.diadoc.Thumbprint}`." * show_thumbprint
         else:
-            first_param = ""
-        second_param = create_unstructured_name(certificate, inn_parameter,
-                                                kpp_parameter) or f"СНИЛС — `{certificate.snils}`" * show_snils
+            tp_param = f"Отпечаток — `{certificate.get_thumbprint().upper()}`." * show_thumbprint
+        un_param = create_unstructured_name(certificate, inn_parameter,
+                                            kpp_parameter) or f"СНИЛС — `{certificate.snils}`." * show_snils
         # 2 пустые строки, чтобы визуально отделить параметры от результата проверки в ответном сообщении
-        return ["", ""] + [parameter for parameter in (first_param, second_param) if parameter]
+        return ["", ""] + [parameter for parameter in (tp_param, un_param) if parameter]
 
     path = save_file()
     if path is None:
@@ -290,11 +289,11 @@ def create_unstructured_name(cert: engine.Certificate, inn: str, kpp: str) -> st
     if unstructured_name:
         unstructured_name = str(unstructured_name)
         if re.match(r"\d{10,12}-\d{9}-\d{12}", unstructured_name):
-            return f"Тройной идентификатор — `{unstructured_name}`"
+            return f"Тройной идентификатор — `{unstructured_name}`."
         elif kpp:
-            return f"Тройной идентификатор — `{'-'.join((inn, kpp, snils))}`"
+            return f"Тройной идентификатор — `{'-'.join((inn, kpp, snils))}`."
     elif kpp:
-        return f"Тройной идентификатор — `{'-'.join((inn, kpp, snils))}`"
+        return f"Тройной идентификатор — `{'-'.join((inn, kpp, snils))}`."
     return ""
 
 

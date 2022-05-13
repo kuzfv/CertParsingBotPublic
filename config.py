@@ -2,7 +2,8 @@
 import os
 from datetime import datetime
 
-# Здесь на боевом сервере указан telegram_api_token
+
+telegram_api_token = ""  # Тут указывается телеграм API-token
 
 __user_commands = ["help", "start", "info", "checks", "settings"]
 __admin_commands = ["get_stat", "get_logs", "update_fss", "get_settings"]
